@@ -12,22 +12,34 @@ soup = BeautifulSoup(response, 'html.parser')
 # print(soup.prettify())
 links = soup.select(".poems a[href]")
 
-print links
+
+poemLinks = []
+
+for poem in links:
+  p = poem.get('href')
+  poemLinks.append(p)
+
+
 
 for number in range(2, 5):
   res = urllib2.urlopen('https://www.poemhunter.com/william-blake/poems/page-{number}/')
   nextSoup = BeautifulSoup(res, 'html.parser')
 
-  for poem in nextSoup:
-    links.append(poem)
+  linkTitles = soup.select('.poems a[href]')
 
+  for poem in linkTitles:
+    p = poem.get('href')
+    poemLinks.append(p)
+
+
+# poemPage = urllib2.urlopen('https://www.poemhunter.com/william-blake/poems/{links[0]}')
 
 
 
 
 print  '-------------------------------------------------------------'
-print links
-print links.length
+print len(poemLinks)
+print poemLinks
 # print nextSoup
 # print soup.find(text=re.compile('Worldwide'))
 # print soup.find_all('td')
