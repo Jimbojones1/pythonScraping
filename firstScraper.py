@@ -12,34 +12,86 @@ soup = BeautifulSoup(response, 'html.parser')
 # print(soup.prettify())
 links = soup.select(".poems a[href]")
 
-
+# stored poem links
 poemLinks = []
 
+# getting links for the first page since it doesn't have page number to lazy to concat
 for poem in links:
   p = poem.get('href')
   poemLinks.append(p)
 
 
-
+# getting links for pages 2, 5
 for number in range(2, 5):
   res = urllib2.urlopen('https://www.poemhunter.com/william-blake/poems/page-{number}/')
   nextSoup = BeautifulSoup(res, 'html.parser')
 
-  linkTitles = soup.select('.poems a[href]')
+  linkTitles = nextSoup.select('.poems a[href]')
 
   for poem in linkTitles:
     p = poem.get('href')
     poemLinks.append(p)
 
 
-# poemPage = urllib2.urlopen('https://www.poemhunter.com/william-blake/poems/{links[0]}')
+
+
+#getting all the poems
+
+poemDic = {}
+
+poemPage = urllib2.urlopen('https://www.poemhunter.com' + poemLinks[0] + '/')
+
+poemSoup = BeautifulSoup(poemPage, 'html.parser')
+
+# print poemSoup.prettify()
+
+# this code extracts the poem as a string
+container = poemSoup.select('.KonaBody')
+f = container[0].p.__str__().strip()
+fp = f.split('<p>\r\n')[1].strip()
+finalPoemString = fp.split('\r\n')[0].strip()
+poemDic['poem'] = finalPoemString
 
 
 
+title    = poemSoup.select('#solSiirMetinDV h1')
+strTitle = title[0].getText().__str__()
+author = strTitle.split('-')[1].split('by')[1].strip()
+
+# print strTitle.split('-')[0].strip()
+
+poemDic['title']  = strTitle.split('-')[0].strip()
+poemDic['author'] = author
+ # author = myStr.split('-')[1].split('by')[1].strip()
 
 print  '-------------------------------------------------------------'
-print len(poemLinks)
-print poemLinks
+print poemDic
+
+
+concatString = 'https://www.poemhunter.com' + poemLinks[0]
+
+# print concatString
+# print poemLinks[0]
+# somePract = urllib2.urlopen(concatString)
+
+# s = BeautifulSoup(somePract, 'html.parser')
+
+# print(s.prettify())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # print nextSoup
 # print soup.find(text=re.compile('Worldwide'))
 # print soup.find_all('td')
